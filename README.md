@@ -4,6 +4,5 @@ Auswahl einer geeigneten Aktie basierend auf Datenanalysen, um optimale Handelss
 # Namenskonvention für Commits
 
 Commit Aaron 19.11.2024 V1
-Commit Aaron 19.11.2024 V2
-
+Commit Aaron 19.11.2024 V2  
 Commit Aaron 20.11.2024 V3
