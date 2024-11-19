@@ -8,3 +8,5 @@ A 19.11.24 V1
 F 19.11.24 V2
 
 # Commit 
+
+# Überlegungen
