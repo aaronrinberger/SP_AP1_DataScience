@@ -7,3 +7,4 @@ Auswahl einer geeigneten Aktie basierend auf Datenanalysen, um optimale Handelss
 A 19.11.24 V1
 F 19.11.24 V2
 
+# Commit 
