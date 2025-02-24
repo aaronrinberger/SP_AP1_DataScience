@@ -3,11 +3,9 @@ Auswahl einer geeigneten Aktie basierend auf Datenanalysen, um optimale Handelss
 
 # Namenskonvention für Commits
 
-# New
 A 19.11.24 V1
 F 19.11.24 V2
 
-# Commit 
 
 # Überlegungen
 
@@ -39,7 +37,8 @@ Auswahl einer geeigneten Aktie basierend auf Datenanalysen, um optimale Handelss
 ## Phase 4: Datenbeschaffung und -speicherung (Datum)
 
 * Implementierung eines Python-Skripts zum Herunterladen historischer Daten mithilfe der `yfinance`-Bibliothek.
-* Festlegung des Datumsbereichs für die historischen Daten (von 2024-01-01 bis 2024-11-18)
+* Festlegung des Datumsbereichs für die historischen Daten (von 2024-01-01 bis heute)
+nach Quartal arbeiten?
 * Implementierung der Fehlerbehandlung für den Fall von Netzwerkproblemen oder fehlenden Daten.
 * Speichern der heruntergeladenen Daten in separaten CSV-Dateien im Ordner `financial_data`.
 * Verwendung von `os.makedirs()` zur automatischen Erstellung des Ordners, falls dieser nicht existiert.
