@@ -1,80 +1,84 @@
-# SP_AP1_DataScience
-Auswahl einer geeigneten Aktie basierend auf Datenanalysen, um optimale Handelsstrategien für den Robo Advisor zu entwickeln.
+# SP_AP1_DataScience: Finanzdaten-Verarbeitungsskript
 
-# Namenskonvention für Commits
+## Projektziel
 
-A 19.11.24 V1
-F 19.11.24 V2
+Ziel dieses Projekts ist die Auswahl geeigneter Finanzinstrumente und die Entwicklung von Handelsstrategien für einen Robo Advisor mittels Datenanalyse. Dieses Skript legt die dafür notwendige Datengrundlage.
 
+## Beschreibung des Skripts
 
-# Überlegungen
+Dieses Python-Skript (`SP_AP_DataScience_Combined_ManualTA_WithExcel.py`) automatisiert den Prozess des Herunterladens, Bereinigens, Berechnens technischer Indikatoren und Visualisierens von historischen Finanzmarktdaten. Es verwendet `yfinance`, um Daten für konfigurierbare Ticker (Aktien, ETFs, Indizes) und Zeiträume abzurufen und bereitet diese für nachfolgende Analysen oder die Entwicklung von Machine-Learning-Modellen auf.
 
-# SP_AP1_DataScience
+## Kernfunktionen
 
-Auswahl einer geeigneten Aktie basierend auf Datenanalysen, um optimale Handelsstrategien für den Robo Advisor zu entwickeln.
+* **Datenbeschaffung:** Lädt historische OHLC-Daten (Open, High, Low, Close) und Adjusted Close von Yahoo! Finance für die in `TICKERS` definierten Symbole.
+* **Datenbereinigung:**
+    * Behandelt potenzielle MultiIndex-Spalten, die von `yfinance` zurückgegeben werden.
+    * Stellt sicher, dass Preisdaten numerisch sind (`pd.to_numeric` mit `errors='coerce'`).
+    * Entfernt Zeilen mit fehlenden Werten (`NaN`), die nach der Indikatorberechnung entstehen.
+* **Feature Engineering:** Berechnet manuell gängige technische Indikatoren:
+    * Simple Moving Averages (SMA): 20, 50, 200 Tage
+    * Bollinger Bänder (auf Basis von SMA 20)
+    * Relative Strength Index (RSI): 14 Perioden
+    * Moving Average Convergence Divergence (MACD): Standardparameter (12, 26, 9)
+* **Visualisierung:** Erstellt und speichert separate PNG-Grafiken für jeden Ticker und Indikator (Bollinger Bänder, RSI, MACD, Kurs/SMAs) im Ausgabeordner.
+* **Datenspeicherung:**
+    * Speichert optional die **Rohdaten** (wie von `yfinance` heruntergeladen) als CSV-Dateien.
+    * Speichert die **aufbereiteten Daten** (inkl. Indikatoren, ohne Volumen) als separate CSV-Dateien.
+    * Speichert optional eine **Excel-Datei**, die alle aufbereiteten Daten für die verschiedenen Ticker in separaten Tabellenblättern zusammenfasst.
 
-# Fortschrittsdokumentation
+## Anforderungen
 
-## Phase 1: Projektinitialisierung und Planung (Datum)
+* Python 3.x
+* Benötigte Python-Bibliotheken:
+    * `yfinance`
+    * `pandas`
+    * `numpy`
+    * `matplotlib`
+    * `openpyxl` (Nur für den optionalen Excel-Export benötigt)
 
-* Projektteam gebildet und Aufgabenverteilung festgelegt.
-* Entscheidung für Python als Programmiersprache und Jupyter Notebook als Entwicklungsumgebung.
-* Festlegung der Ziele und des Projektumfangs.
+    Installiere die Abhängigkeiten mit pip:
+    ```bash
+    pip install yfinance pandas numpy matplotlib openpyxl
+    ```
 
-## Phase 2: Datenquellenrecherche und -auswahl (Datum)
+## Konfiguration
 
-* Recherche verschiedener Datenquellen für historische Aktienkurse, ETFs und Indizes (Yahoo! Finance, Alpha Vantage, IEX Cloud, Quandl, Tiingo, Broker-Plattformen).
-* Entscheidung für Yahoo! Finance als primäre Datenquelle aufgrund der kostenlosen Verfügbarkeit und einfachen Integration mit Python.
-* Identifizierung von Alternativen wie Alpha Vantage, IEX Cloud, Quandl und Tiingo für den Fall von Datenlücken oder Performance-Problemen.
+Die Hauptparameter können am Anfang des Skripts im Abschnitt `# --- Konstanten und Konfiguration ---` angepasst werden:
 
-## Phase 3: Auswahl der Finanzinstrumente (Datum)
+* **`TICKERS`**: Ein Dictionary, das die zu verarbeitenden Ticker-Symbole nach Anlageklassen gruppiert. Aktuell sind nur GOOG, ACWI, ^IXIC aktiv. Weitere können aus den Kommentaren hinzugefügt werden.
+* **`START_DATE` / `END_DATE`**: Der Zeitraum für die herunterzuladenden historischen Daten (Format: 'YYYY-MM-DD').
+* **`OUTPUT_FOLDER`**: Name des Ordners, in dem die aufbereiteten CSV-Dateien und die Plots gespeichert werden (wird automatisch erstellt).
+* **`RAW_DATA_FOLDER`**: Name des Ordners für die optionalen Rohdaten-CSVs (wird automatisch erstellt, falls `SAVE_RAW_DATA=True`).
+* **`SAVE_RAW_DATA`**: Boolean (`True`/`False`), steuert, ob die Rohdaten zusätzlich gespeichert werden sollen.
+* **`PLOT_FIGSIZE`**: Größe der zu erstellenden Plots.
 
-* Auswahl von Apple (AAPL) als Beispielaktie.
-* Auswahl des iShares MSCI ACWI ETF (ACWI) als repräsentativen ETF für den globalen Aktienmarkt.
-* Auswahl des S&P 500 (.INX oder ^GSPC) als Vergleichsindex.
-* Begründung der Auswahl der Finanzinstrumente.
+## Benutzung
 
-## Phase 4: Datenbeschaffung und -speicherung (Datum)
+1.  Stelle sicher, dass alle Anforderungen (Python und Bibliotheken) installiert sind.
+2.  Passe bei Bedarf die Parameter im Abschnitt `Konstanten und Konfiguration` im Skript an.
+3.  Führe das Skript von deinem Terminal oder deiner IDE aus:
 
-* Implementierung eines Python-Skripts zum Herunterladen historischer Daten mithilfe der `yfinance`-Bibliothek.
-* Festlegung des Datumsbereichs für die historischen Daten (von 2024-01-01 bis heute)
-nach Quartal arbeiten?
-* Implementierung der Fehlerbehandlung für den Fall von Netzwerkproblemen oder fehlenden Daten.
-* Speichern der heruntergeladenen Daten in separaten CSV-Dateien im Ordner `financial_data`.
-* Verwendung von `os.makedirs()` zur automatischen Erstellung des Ordners, falls dieser nicht existiert.
-* Verwendung von `os.path.join()` zur plattformunabhängigen Pfadgenerierung.
+    ```bash
+    python SP_AP_DataScience_Combined_ManualTA_WithExcel.py
+    ```
+    (Ersetze `SP_AP_DataScience_Combined_ManualTA_WithExcel.py` durch den tatsächlichen Dateinamen deines Skripts).
 
+## Erzeugte Ausgaben
 
-## Phase 5: Datenaufbereitung und Feature Engineering (Datum)
+Nach erfolgreicher Ausführung findest du im Hauptverzeichnis die folgenden Ordner und Dateien (Namen basieren auf der Standardkonfiguration):
 
-* Laden der CSV-Dateien in Pandas DataFrames.
-* Behandlung fehlender Werte durch Ersetzen mit dem Spaltenmittelwert.  Alternativen wie `ffill` oder `bfill` wurden in Betracht gezogen.
-* Berechnung von technischen Indikatoren wie:
-    * Gleitende Durchschnitte (SMA 50, SMA 200)
-    * Bollinger Bänder
-    * Relativer Stärke Index (RSI)
-    * MACD (Moving Average Convergence Divergence)
-* Visualisierung der Daten und Indikatoren in Jupyter Notebook zur Überprüfung und Analyse.
-* Speichern des aufbereiteten DataFrames im Pickle-Format für effizientes Laden in anderen Notebooks.
+1.  **`financial_data_prepared/`** (Ordner):
+    * `prepared_TICKER_TYP_data.csv`: CSV-Dateien mit den aufbereiteten Daten (OHLC, Adj Close, Indikatoren) für jeden Ticker (z.B. `prepared_GOOG_stocks_data.csv`).
+    * `plot_TICKER_TYP_INDIKATOR.png`: PNG-Grafiken der technischen Indikatoren für jeden Ticker (z.B. `plot_GOOG_stocks_BollingerBands.png`).
+    * `alle_vorbereiteten_daten_final.xlsx` (Optional): Eine Excel-Datei, die alle `prepared_*.csv`-Daten in separaten Blättern zusammenfasst.
+2.  **`financial_data_raw/`** (Ordner, nur wenn `SAVE_RAW_DATA = True`):
+    * `TICKER_TYP_raw_data.csv`: CSV-Dateien mit den unveränderten Rohdaten, wie sie von `yfinance` heruntergeladen wurden (inkl. Datum als Spalte, ggf. inkl. Volumen).
 
-## Nächste Schritte:
+## Nächste Schritte im Projekt
 
-* Weitere Feature Engineering und Feature-Auswahl.
-* Entwicklung und Training von Machine-Learning-Modellen.
-* Backtesting der Handelsstrategie.
-* Implementierung des Bots und Integration mit MetaTrader.
-* Entwicklung des Dashboards mit Django.
+Die in diesem Skript erzeugten `prepared_*.csv`-Dateien oder die Excel-Datei dienen als Grundlage für:
 
-# Grundlegende Überlegungen (kann später entfernt oder integriert werden)
-
-
-## Überlegungen zur Datensammlung
-
-
-
-## Überlegungen zu Vergleichsindex
-
-
-
-
-
+* Detailliertere explorative Datenanalysen.
+* Weiteres Feature Engineering und Auswahl relevanter Merkmale.
+* Entwicklung und Training von Machine-Learning-Modellen für Handelssignale.
+* Backtesting der entwickelten Handelsstrategien.
