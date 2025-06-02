@@ -1,84 +1,119 @@
-# SP_AP1_DataScience: Finanzdaten-Verarbeitungsskript
+# Projekt: Finanzdatenanalyse und Vorhersagemodell
 
-## Projektziel
+## Übersicht
 
-Ziel dieses Projekts ist die Auswahl geeigneter Finanzinstrumente und die Entwicklung von Handelsstrategien für einen Robo Advisor mittels Datenanalyse. Dieses Skript legt die dafür notwendige Datengrundlage.
+Dieses Projekt dient der Analyse von Finanzmarktdaten, insbesondere Aktienkursen. Es besteht aus zwei Hauptkomponenten:
 
-## Beschreibung des Skripts
+1.  **Datenauswahl und -verarbeitung (`SP_AP1_DataScience_01_Datenauswahl_und_Verarbeitung .ipynb`)**: Dieses Skript lädt historische Finanzdaten für ausgewählte Ticker-Symbole herunter, berechnet verschiedene technische Indikatoren, visualisiert diese und speichert die aufbereiteten Daten.
+2.  **Modelltraining (`SP_AP1_DataScience_02_Modelltraining.ipynb`)**: Dieses Skript verwendet die aufbereiteten Daten, um ein Machine-Learning-Modell (Random Forest Classifier) zu trainieren. Das Ziel des Modells ist es, vorherzusagen, ob der Schlusskurs des nächsten Handelstages höher oder niedriger als der aktuelle Schlusskurs sein wird. Es beinhaltet auch eine Hyperparameter-Optimierung mittels GridSearchCV.
 
-Dieses Python-Skript (`SP_AP_DataScience_Combined_ManualTA_WithExcel.py`) automatisiert den Prozess des Herunterladens, Bereinigens, Berechnens technischer Indikatoren und Visualisierens von historischen Finanzmarktdaten. Es verwendet `yfinance`, um Daten für konfigurierbare Ticker (Aktien, ETFs, Indizes) und Zeiträume abzurufen und bereitet diese für nachfolgende Analysen oder die Entwicklung von Machine-Learning-Modellen auf.
+## Voraussetzungen
 
-## Kernfunktionen
+Stellen Sie sicher, dass die folgenden Softwarekomponenten und Python-Bibliotheken installiert sind:
 
-* **Datenbeschaffung:** Lädt historische OHLC-Daten (Open, High, Low, Close) und Adjusted Close von Yahoo! Finance für die in `TICKERS` definierten Symbole.
-* **Datenbereinigung:**
-    * Behandelt potenzielle MultiIndex-Spalten, die von `yfinance` zurückgegeben werden.
-    * Stellt sicher, dass Preisdaten numerisch sind (`pd.to_numeric` mit `errors='coerce'`).
-    * Entfernt Zeilen mit fehlenden Werten (`NaN`), die nach der Indikatorberechnung entstehen.
-* **Feature Engineering:** Berechnet manuell gängige technische Indikatoren:
-    * Simple Moving Averages (SMA): 20, 50, 200 Tage
-    * Bollinger Bänder (auf Basis von SMA 20)
-    * Relative Strength Index (RSI): 14 Perioden
-    * Moving Average Convergence Divergence (MACD): Standardparameter (12, 26, 9)
-* **Visualisierung:** Erstellt und speichert separate PNG-Grafiken für jeden Ticker und Indikator (Bollinger Bänder, RSI, MACD, Kurs/SMAs) im Ausgabeordner.
-* **Datenspeicherung:**
-    * Speichert optional die **Rohdaten** (wie von `yfinance` heruntergeladen) als CSV-Dateien.
-    * Speichert die **aufbereiteten Daten** (inkl. Indikatoren, ohne Volumen) als separate CSV-Dateien.
-    * Speichert optional eine **Excel-Datei**, die alle aufbereiteten Daten für die verschiedenen Ticker in separaten Tabellenblättern zusammenfasst.
+* **Python**: Version 3.9 oder höher empfohlen.
+* **Jupyter Notebook oder Jupyter Lab**: Zur Ausführung der `.ipynb`-Dateien.
+* **Python-Bibliotheken**:
+    * `yfinance`: Zum Herunterladen von Finanzdaten.
+    * `pandas`: Für Datenmanipulation und -analyse.
+    * `numpy`: Für numerische Operationen.
+    * `matplotlib`: Zum Erstellen von Diagrammen.
+    * `scikit-learn`: Für Machine-Learning-Aufgaben (Modellauswahl, Metriken, Ensemble-Methoden, Preprocessing).
+    * `os`: Für Interaktionen mit dem Betriebssystem (Dateipfade etc.).
+    * `traceback`: Zur Fehlerbehandlung.
 
-## Anforderungen
-
-* Python 3.x
-* Benötigte Python-Bibliotheken:
-    * `yfinance`
-    * `pandas`
-    * `numpy`
-    * `matplotlib`
-    * `openpyxl` (Nur für den optionalen Excel-Export benötigt)
-
-    Installiere die Abhängigkeiten mit pip:
+    Sie können die meisten Bibliotheken mit `pip` installieren:
     ```bash
-    pip install yfinance pandas numpy matplotlib openpyxl
+    pip install yfinance pandas numpy matplotlib scikit-learn jupyter
     ```
 
-## Konfiguration
+## Vorgehensweise
 
-Die Hauptparameter können am Anfang des Skripts im Abschnitt `# --- Konstanten und Konfiguration ---` angepasst werden:
+### Schritt 1: Datenauswahl und -verarbeitung
 
-* **`TICKERS`**: Ein Dictionary, das die zu verarbeitenden Ticker-Symbole nach Anlageklassen gruppiert. Aktuell sind nur GOOG, ACWI, ^IXIC aktiv. Weitere können aus den Kommentaren hinzugefügt werden.
-* **`START_DATE` / `END_DATE`**: Der Zeitraum für die herunterzuladenden historischen Daten (Format: 'YYYY-MM-DD').
-* **`OUTPUT_FOLDER`**: Name des Ordners, in dem die aufbereiteten CSV-Dateien und die Plots gespeichert werden (wird automatisch erstellt).
-* **`RAW_DATA_FOLDER`**: Name des Ordners für die optionalen Rohdaten-CSVs (wird automatisch erstellt, falls `SAVE_RAW_DATA=True`).
-* **`SAVE_RAW_DATA`**: Boolean (`True`/`False`), steuert, ob die Rohdaten zusätzlich gespeichert werden sollen.
-* **`PLOT_FIGSIZE`**: Größe der zu erstellenden Plots.
+**Skript:** `SP_AP1_DataScience_01_Datenauswahl_und_Verarbeitung .ipynb`
 
-## Benutzung
+1.  **Zweck**:
+    * Herunterladen von historischen Kursdaten für definierte Ticker-Symbole.
+    * Berechnung technischer Indikatoren (SMAs, Bollinger Bänder, RSI, MACD).
+    * Visualisierung der Indikatoren und Speicherung der Plots.
+    * Speicherung der aufbereiteten Daten als CSV-Datei pro Ticker und in einer zusammenfassenden Excel-Datei.
 
-1.  Stelle sicher, dass alle Anforderungen (Python und Bibliotheken) installiert sind.
-2.  Passe bei Bedarf die Parameter im Abschnitt `Konstanten und Konfiguration` im Skript an.
-3.  Führe das Skript von deinem Terminal oder deiner IDE aus:
+2.  **Konfiguration (innerhalb des Skripts anpassbar)**:
+    * `OUTPUT_FOLDER`: Zielordner für aufbereitete Daten und Plots (Standard: `"financial_data_prepared"`).
+    * `RAW_DATA_FOLDER`: Zielordner für Rohdaten (Standard: `"financial_data_raw"`).
+    * `SAVE_RAW_DATA`: Boolean, ob Rohdaten gespeichert werden sollen (Standard: `True`).
+    * `TICKERS`: Dictionary zur Definition der zu verarbeitenden Ticker-Symbole und Anlageklassen (z.B. `{"Stocks": ["GOOG"]}`).
+    * `START_DATE`, `END_DATE`: Zeitraum für den Daten-Download.
+    * `PLOT_FORMAT`: Format für die gespeicherten Diagramme (Standard: `"eps"`).
 
-    ```bash
-    python SP_AP_DataScience_Combined_ManualTA_WithExcel.py
-    ```
-    (Ersetze `SP_AP_DataScience_Combined_ManualTA_WithExcel.py` durch den tatsächlichen Dateinamen deines Skripts).
+3.  **Ausführung**:
+    * Öffnen Sie das Notebook in Jupyter.
+    * Führen Sie alle Zellen nacheinander aus.
+    * Das Skript erstellt die Ordner `financial_data_prepared` und (optional) `financial_data_raw`, falls sie nicht existieren.
 
-## Erzeugte Ausgaben
+4.  **Erzeugte Dateien**:
+    * Im Ordner `financial_data_prepared`:
+        * `prepared_{TICKER}_{ASSET_TYPE}_data.csv`: Eine CSV-Datei für jeden verarbeiteten Ticker (z.B. `prepared_GOOG_stocks_data.csv`). Enthält die Kursdaten und die berechneten Indikatoren.
+        * Diverse Plot-Dateien (z.B. `plot_GOOG_stocks_BollingerBands.eps`, `plot_GOOG_stocks_RSI.eps`, etc.).
+        * `alle_vorbereiteten_daten_final.xlsx`: Eine Excel-Datei mit jeweils einem Tabellenblatt pro verarbeitetem Ticker.
+    * Im Ordner `financial_data_raw` (wenn `SAVE_RAW_DATA = True`):
+        * `{TICKER}_{ASSET_TYPE}_raw_data.csv`: Rohdaten direkt von `yfinance`.
 
-Nach erfolgreicher Ausführung findest du im Hauptverzeichnis die folgenden Ordner und Dateien (Namen basieren auf der Standardkonfiguration):
+### Schritt 2: Modelltraining
 
-1.  **`financial_data_prepared/`** (Ordner):
-    * `prepared_TICKER_TYP_data.csv`: CSV-Dateien mit den aufbereiteten Daten (OHLC, Adj Close, Indikatoren) für jeden Ticker (z.B. `prepared_GOOG_stocks_data.csv`).
-    * `plot_TICKER_TYP_INDIKATOR.png`: PNG-Grafiken der technischen Indikatoren für jeden Ticker (z.B. `plot_GOOG_stocks_BollingerBands.png`).
-    * `alle_vorbereiteten_daten_final.xlsx` (Optional): Eine Excel-Datei, die alle `prepared_*.csv`-Daten in separaten Blättern zusammenfasst.
-2.  **`financial_data_raw/`** (Ordner, nur wenn `SAVE_RAW_DATA = True`):
-    * `TICKER_TYP_raw_data.csv`: CSV-Dateien mit den unveränderten Rohdaten, wie sie von `yfinance` heruntergeladen wurden (inkl. Datum als Spalte, ggf. inkl. Volumen).
+**Skript:** `SP_AP1_DataScience_02_Modelltraining.ipynb`
 
-## Nächste Schritte im Projekt
+1.  **Zweck**:
+    * Laden der aufbereiteten Daten aus Schritt 1.
+    * Erstellung zusätzlicher Features (z.B. `Momentum`, Position im Bollinger Band).
+    * Definition einer Zielvariable (`Target`): `1` wenn der nächste Kurswert höher ist, sonst `0`.
+    * Aufteilung der Daten in Trainings- und Testsets (unter Berücksichtigung der Zeitreihennatur, `shuffle=False`).
+    * Hyperparameter-Optimierung für ein `RandomForestClassifier`-Modell mittels `GridSearchCV` und `TimeSeriesSplit`.
+    * Training des finalen Modells mit den besten gefundenen Parametern.
+    * Bewertung des Modells auf den Testdaten (Genauigkeit).
+    * Anzeige der Feature Importance (Mean Decrease Impurity und Permutation Importance).
 
-Die in diesem Skript erzeugten `prepared_*.csv`-Dateien oder die Excel-Datei dienen als Grundlage für:
+2.  **Konfiguration (innerhalb des Skripts anpassbar)**:
+    * `PREPARED_DATA_FOLDER`: Muss auf den Ordner zeigen, in dem die aufbereiteten Daten aus Schritt 1 gespeichert wurden (Standard: `"financial_data_prepared"`).
+    * `TICKER_SYMBOL`: Das Ticker-Symbol, für das das Modell trainiert werden soll (z.B. `"GOOG"`).
+    * `ASSET_TYPE`: Die Anlageklasse des Tickers (z.B. `"stocks"`).
+    * `potential_features`: Liste der Features, die für das Modelltraining in Betracht gezogen werden sollen.
+    * `param_grid`: Das Suchraster für die Hyperparameter-Optimierung.
 
-* Detailliertere explorative Datenanalysen.
-* Weiteres Feature Engineering und Auswahl relevanter Merkmale.
-* Entwicklung und Training von Machine-Learning-Modellen für Handelssignale.
-* Backtesting der entwickelten Handelsstrategien.
+3.  **Abhängigkeiten**:
+    * Dieses Skript benötigt die CSV-Datei, die von `SP_AP1_DataScience_01_Datenauswahl_und_Verarbeitung .ipynb` erzeugt wurde (z.B. `financial_data_prepared/prepared_GOOG_stocks_data.csv`).
+
+4.  **Ausführung**:
+    * Öffnen Sie das Notebook in Jupyter.
+    * Stellen Sie sicher, dass die Konfigurationsvariablen (`PREPARED_DATA_FOLDER`, `TICKER_SYMBOL`, `ASSET_TYPE`) korrekt auf die Ausgaben von Schritt 1 verweisen.
+    * Führen Sie alle Zellen nacheinander aus.
+
+5.  **Erzeugte Dateien/Ausgaben**:
+    * Das Skript gibt die besten gefundenen Hyperparameter, die Cross-Validation-Genauigkeit, die Genauigkeit auf dem Testset sowie die Feature Importances in den Notebook-Ausgabezellen aus.
+    * Es wird in der aktuellen Form *keine* Modelldatei oder Vorhersagedatei explizit gespeichert.
+
+## Grundprinzip des Projekts
+
+Das Projekt folgt einem typischen Data-Science-Workflow für Zeitreihen-basierte Vorhersagen:
+
+1.  **Datenakquise und -aufbereitung**: Relevante Rohdaten werden beschafft und in ein sauberes, nutzbares Format überführt. Durch Feature Engineering werden zusätzliche, potenziell informative Variablen (technische Indikatoren) erstellt.
+2.  **Modellentwicklung**: Ein Klassifikationsmodell wird trainiert, um basierend auf den historischen Daten und Indikatoren die Richtung der Preisbewegung für den nächsten Tag vorherzusagen.
+3.  **Modelloptimierung und -evaluierung**: Die Leistung des Modells wird durch Hyperparameter-Tuning verbessert und anhand geeigneter Metriken auf einem separaten Testdatensatz bewertet. Die Wichtigkeit verschiedener Features für die Vorhersageentscheidungen des Modells wird analysiert.
+
+Die Vorhersage, ob ein Kurs steigt oder fällt, ist eine binäre Klassifikationsaufgabe. Die erreichten Genauigkeiten (oft um die 50-55% bei einfachen Modellen für Finanzmärkte, wie im Beispiel-Output von Skript 2 ersichtlich) zeigen die Schwierigkeit dieser Aufgabe, da Finanzmärkte von vielen Faktoren beeinflusst werden und eine hohe Zufallskomponente aufweisen.
+
+## Wichtige Hinweise
+
+* **Plot-Format `.eps`**: Das gewählte Format `.eps` (Encapsulated PostScript) ist ein Vektorformat, das sich gut für Publikationen eignet. Beachten Sie, dass manche Viewer Probleme mit der Transparenz in EPS-Dateien haben könnten, was zu Warnungen während der Plot-Speicherung führen kann (z.B. "The PostScript backend does not support transparency..."). Dies ist meist unkritisch für die erzeugten Plots.
+* **Modellleistung**: Die Vorhersage von Aktienkursen ist eine komplexe Herausforderung. Die mit diesem Modell erreichte Genauigkeit dient als Grundlage und kann durch komplexere Modelle, zusätzliche Features oder alternative Datenquellen potenziell verbessert werden.
+* **Keine Anlageberatung**: Dieses Projekt dient ausschließlich zu Lern- und Demonstrationszwecken. Die Ergebnisse und das Modell stellen keine Anlageberatung dar.
+
+## Mögliche Erweiterungen
+
+* Speichern des trainierten Modells (z.B. mit `joblib` oder `pickle`).
+* Implementierung einer Funktion zur Vorhersage für neue, ungesehene Daten.
+* Erweiterung um weitere Ticker-Symbole oder Anlageklassen.
+* Testen anderer Machine-Learning-Modelle (z.B. LSTM, XGBoost).
+* Hinzufügen weiterer Features (z.B. Fundamentaldaten, Sentiment-Analysen).
+* Umfangreichere Fehlerbehandlung und Logging.
